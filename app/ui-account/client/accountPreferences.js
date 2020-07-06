@@ -83,13 +83,6 @@ Template.accountPreferences.helpers({
 	desktopNotificationDisabled() {
 		return KonchatNotification.notificationStatus.get() === 'denied' || (window.Notification && Notification.permission === 'denied');
 	},
-	desktopNotificationDuration() {
-		const userPref = getUserPreference(Meteor.userId(), 'desktopNotificationDuration', 'undefined');
-		return userPref !== 'undefined' ? userPref : undefined;
-	},
-	defaultDesktopNotificationDuration() {
-		return settings.get('Accounts_Default_User_Preferences_desktopNotificationDuration');
-	},
 	desktopNotificationRequireInteraction() {
 		const userPref = getUserPreference(Meteor.userId(), 'desktopNotificationRequireInteraction', 'undefined');
 		return userPref !== 'undefined' ? userPref : undefined;
@@ -172,13 +165,13 @@ Template.accountPreferences.onCreated(function() {
 		data.muteFocusedConversations = JSON.parse($('#muteFocusedConversations').find('input:checked').val());
 		data.hideUsernames = JSON.parse($('#hideUsernames').find('input:checked').val());
 		data.messageViewMode = parseInt($('#messageViewMode').find('select').val());
+		data.showMessageInMainThread = JSON.parse($('#showMessageInMainThread').find('input:checked').val());
 		data.hideFlexTab = JSON.parse($('#hideFlexTab').find('input:checked').val());
 		data.hideAvatars = JSON.parse($('#hideAvatars').find('input:checked').val());
 		data.sidebarHideAvatar = JSON.parse($('#sidebarHideAvatar').find('input:checked').val());
 		data.sendOnEnter = $('#sendOnEnter').find('select').val();
 		data.autoImageLoad = JSON.parse($('input[name=autoImageLoad]:checked').val());
 		data.emailNotificationMode = $('select[name=emailNotificationMode]').val();
-		data.desktopNotificationDuration = $('input[name=desktopNotificationDuration]').val() === '' ? settings.get('Accounts_Default_User_Preferences_desktopNotificationDuration') : parseInt($('input[name=desktopNotificationDuration]').val());
 		data.desktopNotifications = $('#desktopNotifications').find('select').val();
 		data.mobileNotifications = $('#mobileNotifications').find('select').val();
 		data.unreadAlert = JSON.parse($('#unreadAlert').find('input:checked').val());
@@ -330,7 +323,6 @@ Template.accountPreferences.events({
 	'click .js-test-notifications'(e) {
 		e.preventDefault();
 		KonchatNotification.notify({
-			duration: $('input[name=desktopNotificationDuration]').val(),
 			payload: { sender: { username: 'rocket.cat' },
 			},
 			title: TAPi18n.__('Desktop_Notification_Test'),
